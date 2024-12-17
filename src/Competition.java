@@ -56,9 +56,16 @@ public class Competition {
      * @throws IllegalArgumentException if the team already exists
      */
     public boolean addTeam(Team team) {
+        if (!team.isValidForMatch()) {
+            System.out.println("Error: Team " + team.getName() + " is not valid and cannot be added to the competition.");
+            return false;
+        }
         for (Team t : teams) {
             if (t.getName().equalsIgnoreCase(team.getName())) {
-                throw new IllegalArgumentException("Error: Team " + team.getName() + " is already in the competition.");
+                //throw new IllegalArgumentException("Error: Team " + team.getName() + " is already in the competition.");
+                teams.remove(t);
+                System.out.println("Team " + team.getName() + " replaced in competition " + name + ".");
+                break;
             }
         }
         teams.add(team);
@@ -138,11 +145,6 @@ public class Competition {
         }
     }
 
-
-    /**
-     * Generate all possible matches for the competition.
-     * Matches are scheduled between all pairs of teams with random match dates within the next 30 days.
-     */
     public void generateMatches() {
         if (teams.size() < 2) {
             System.out.println("Error: At least two teams are required to schedule matches.");
@@ -172,6 +174,81 @@ public class Competition {
 
         System.out.println("All matches generated successfully. Total matches: " + matches.size());
     }
+
+    // Simuler un match avec des scores aléatoires
+    public void simulateMatch(Match match) {
+        Random random = new Random();
+        int homeGoals = random.nextInt(5);
+        int awayGoals = random.nextInt(5);
+
+        // Simulation de chaque but (en utilisant simulateGoal)
+        for (int minute = 1; minute <= 90; minute += random.nextInt(10) + 1) {
+            if (random.nextDouble() < 0.1) { // 10% de chance qu'un but soit marqué à chaque minute
+                if (random.nextBoolean()) {
+                    simulateGoal(match.getHomeTeam(), match, minute, random);
+                } else {
+                    simulateGoal(match.getAwayTeam(), match, minute, random);
+                }
+            }
+        }
+
+        // Mettre à jour le score final
+        match.recordScore(homeGoals, awayGoals);
+    }
+
+    // Simuler un but pour une team
+    private void simulateGoal(Team team, Match match, int minute, Random random) {
+        // Récupérer les players de la team
+        List<Player> players = new ArrayList<>(team.getPlayers());
+
+        // Classer les joueurs par poste
+        List<Player> forwards = new ArrayList<>();
+        List<Player> midfielders = new ArrayList<>();
+        List<Player> defenders = new ArrayList<>();
+        List<Player> goalkeepers = new ArrayList<>();
+
+        for (Player player : players) {
+            switch (player.getPosition()) {
+                case FWD: forwards.add(player); break;
+                case MID: midfielders.add(player); break;
+                case DEF: defenders.add(player); break;
+                case GK: goalkeepers.add(player); break;
+            }
+        }
+
+        Player scorer = null;
+        Player assister = null;
+        double roll = random.nextDouble();
+
+        // Choisir un buteur en fonction des probabilités
+        if (roll < 0.50 && !forwards.isEmpty()) {  // 50% chance pour attaquants
+            scorer = forwards.get(random.nextInt(forwards.size()));
+        } else if (roll < 0.80 && !midfielders.isEmpty()) {  // 30% chance pour milieux
+            scorer = midfielders.get(random.nextInt(midfielders.size()));
+        } else if (roll < 0.95 && !defenders.isEmpty()) {  // 15% chance pour défenseurs
+            scorer = defenders.get(random.nextInt(defenders.size()));
+        } else if (!goalkeepers.isEmpty()) {  // 5% chance pour gardiens
+            scorer = goalkeepers.get(random.nextInt(goalkeepers.size()));
+        }
+
+        // Assister aléatoire (20% de probabilité d'avoir un assist)
+        if (random.nextDouble() < 0.2) {
+            assister = players.get(random.nextInt(players.size()));
+        }
+
+        // Si un buteur a été sélectionné
+        if (scorer != null) {
+            scorer.addGoal();
+            if (assister != null) {
+                assister.addAssist();
+            }
+
+            match.addGoalEvent(scorer, assister, team, minute);
+
+            System.out.println("Minute " + minute + ": Goal for " + team.getName() + " by " + scorer.getName() + (assister != null ? " (Assist: " + assister.getName() + ")" : ""));
+        }
+    }
+
 
     @Override
     public String toString() {

@@ -105,25 +105,71 @@ public class Main {
 
 
         //test2
+        // Step 1: Create a competition
+        Competition competition = new Competition("Champions League");
 
-        Team france = new Team("France");
-        Team brazil = new Team("Brazil");
+        // Step 2: Create and add teams
+        Team team1 = new Team("Real Madrid");
+        Team team2 = new Team("Barcelona");
+        Team team3 = new Team("Manchester United");
+        Team team4 = new Team("Bayern Munich");
 
-        Player mbappe = new Player("Kylian Mbappé");
-        Player griezmann = new Player("Antoine Griezmann");
+        // Add players to each team
+        addPlayersToTeam(team1);
+        addPlayersToTeam(team2);
+        addPlayersToTeam(team3);
+        addPlayersToTeam(team4);
 
-        france.addPlayer(mbappe);
-        france.addPlayer(griezmann);
+        // Add teams to the competition
+        competition.addTeam(team1);
+        competition.addTeam(team2);
+        competition.addTeam(team3);
+        competition.addTeam(team4);
 
-        Match match = new Match(LocalDateTime.now(), france, brazil);
+        // Step 3: Generate all possible matches
+        competition.generateMatches();
 
-        // Ajout d'un but
-        match.addGoalEvent(mbappe, griezmann, france, 27);
+        // Step 4: Display the generated matches
+        System.out.println("\nGenerated Matches:");
+        competition.displayMatches();
 
-        // Affichage des détails du match
-        match.displayMatchDetails();
-        System.out.println("stats joueurs : ");
-        mbappe.getGoals();
-        mbappe.getStats();
+        // Step 5: Simulate all matches
+        System.out.println("\nSimulating Matches:");
+        for (Match match : competition.getMatches()) {
+            competition.simulateMatch(match);
+        }
+
+        // Step 6: Display final standings
+        System.out.println("\nFinal Standings:");
+        competition.displayStandings();
+
+        // Step 7: Display match details
+        System.out.println("\nMatch Details:");
+        competition.displayMatches();
+    }
+
+
+    /**
+     * Utility method to add players to a team with the required formation.
+     * @param team the team to which players will be added
+     */
+    private static void addPlayersToTeam(Team team) {
+        // Adding 1 Goalkeeper
+        team.addPlayer(new Player("GK " + team.getName(), Position.GK));
+
+        // Adding 4 Defenders
+        for (int i = 1; i <= 4; i++) {
+            team.addPlayer(new Player("Joueur " + " " + i + team.getName() , Position.DEF));
+        }
+
+        // Adding 4 Midfielders
+        for (int i = 1; i <= 4; i++) {
+            team.addPlayer(new Player("Joueur " + " " + i + team.getName(), Position.MID));
+        }
+
+        // Adding 2 Forwards
+        for (int i = 1; i <= 2; i++) {
+            team.addPlayer(new Player("Joueur " + " " + i + team.getName(), Position.FWD));
+        }
     }
 }
