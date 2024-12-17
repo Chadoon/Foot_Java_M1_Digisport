@@ -7,15 +7,24 @@ public class Player extends Person {
      */
     private int goals;
     private int assists;
+    private Position position ;
 
     // Constructor
-    public Player(String name) {
+    public Player(String name, Position position) {
         super(name); // Appelle le constructeur de Person pour initialiser 'name'
         this.goals = 0;
         this.assists = 0;
+        this.position = position ;
     }
 
     // Getters
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 
     /**
      * Getter of the player name

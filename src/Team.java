@@ -2,8 +2,9 @@
  * This class was created to manage a team, calculate the team stats (goal, points)
  */
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
+import static javax.swing.UIManager.put;
 
 //Attributes
 public class Team {
@@ -21,7 +22,13 @@ public class Team {
     private int wins, losses, draws, points, goals, goalsAgainst;
     private static final int MAX_PLAYERS = 23; // Limite maximale de joueurs
     private static final int REQUIRED_PLAYERS_FOR_MATCH = 11;
-
+    // Définir la composition fixe pour un match : 1 GK, 4 DEF, 4 MID, 2 FWD
+    private static final Map<Position, Integer> FORMATION = new HashMap<>() {{
+        put(Position.GK, 1);
+        put(Position.DEF, 4);
+        put(Position.MID, 4);
+        put(Position.FWD, 2);
+    }};
     // Constructor
     public Team(String name) {
         this.name = name;
@@ -78,13 +85,45 @@ public class Team {
         return goals - goalsAgainst;
     }
 
+    // Méthode pour vérifier si la composition respecte les contraintes
+    public boolean isValidFormation() {
+        Map<Position, Integer> positionCounts = new HashMap<>();
+        // Initialiser
+        for (Position pos : Position.values()) {
+            positionCounts.put(pos, 0);
+        }
+
+        // Compter les joueurs dans chaque position
+        for (Player player : players) {
+            Position pos = player.getPosition();
+            positionCounts.put(pos, positionCounts.get(pos) + 1);
+        }
+
+        // Comparer avec la formation requise
+        for (Map.Entry<Position, Integer> entry : FORMATION.entrySet()) {
+            Position pos = entry.getKey();
+            int requiredCount = entry.getValue();
+            int actualCount = positionCounts.get(pos);
+
+            if (actualCount != requiredCount) {
+                System.out.println("Invalid formation: " + pos + " required = " + requiredCount + ", found = " + actualCount);
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Checks if the team is valid for a match, meaning that the number of players is exactly 11
      * @return true if the team is valid for a match, false otherwise
      */
     //verifie que lequipe est valide pour un match uniquement si elle a pile 11 joueur avant le match
     public boolean isValidForMatch() {
-        return players.size() == REQUIRED_PLAYERS_FOR_MATCH;
+        if (players.size() != REQUIRED_PLAYERS_FOR_MATCH) {
+            System.out.println("Error: The team must have exactly " + REQUIRED_PLAYERS_FOR_MATCH + " players.");
+            return false;
+        }
+        return isValidFormation();
     }
 
     /**
