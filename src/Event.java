@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 
 public abstract class Event {
-    private enum Type {YELLOW_CARD,RED_CARD,GOAL,SUBSTITUTION};
-
+    public enum Type {YELLOW_CARD,RED_CARD,GOAL,SUBSTITUTION};
     private Type eventType;
     private int minute;
     private ArrayList<Player> players;
@@ -11,6 +10,14 @@ public abstract class Event {
         this.eventType = eventType;
         this.minute = minute;
         this.players = players;
+    }
+
+    public ArrayList<Player> getPlayersE() {
+        return players;
+    }
+
+    public int getMinute() {
+        return minute ;
     }
 
     public String getEvent() {
