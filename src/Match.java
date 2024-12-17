@@ -174,15 +174,14 @@ public class Match {
             System.out.println("Error: Player " + player.getName() + " is not part of either team.");
             return;
         }
-
+        // Ajouter un but au joueur
+        player.addGoal();
         playerGoals.put(player, playerGoals.getOrDefault(player, 0) + 1);
+
+        // Mettre à jour le score de l'équipe
         updateTeamScore();
 
-        if (homeTeam.getPlayers().contains(player)) {
-            homeScore++;
-        } else if (awayTeam.getPlayers().contains(player)) {
-            awayScore++;
-        }
+        System.out.println("Goal! " + player.getName() + " scored for the team.");
     }
 
 

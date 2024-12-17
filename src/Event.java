@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Event {
+public abstract class Event {
     private enum Type {YELLOW_CARD,RED_CARD,GOAL,SUBSTITUTION};
 
     private Type eventType;
