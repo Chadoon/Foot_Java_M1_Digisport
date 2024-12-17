@@ -122,5 +122,8 @@ public class Main {
 
         // Affichage des détails du match
         match.displayMatchDetails();
+        System.out.println("stats joueurs : ");
+        mbappe.getGoals();
+        mbappe.getStats();
     }
 }

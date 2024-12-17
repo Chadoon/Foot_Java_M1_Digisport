@@ -34,6 +34,8 @@ public class Team {
         this.goalsAgainst = 0;
     }
 
+
+
     // Getters and Setters
     /**
      * get the team name
@@ -80,6 +82,7 @@ public class Team {
      * Checks if the team is valid for a match, meaning that the number of players is exactly 11
      * @return true if the team is valid for a match, false otherwise
      */
+    //verifie que lequipe est valide pour un match uniquement si elle a pile 11 joueur avant le match
     public boolean isValidForMatch() {
         return players.size() == REQUIRED_PLAYERS_FOR_MATCH;
     }
@@ -90,6 +93,10 @@ public class Team {
      * @return true if the player has been added, else false
      */
     public boolean addPlayer(Player player) {
+        if (player == null) {
+            System.out.println("Error: Cannot add a null player.");
+            return false;
+        }
         if (players.size() >= MAX_PLAYERS) {
             System.out.println("Error: Cannot add more players. The team already has " + MAX_PLAYERS + " players.");
             return false;
@@ -139,6 +146,10 @@ public class Team {
      * @param concededGoals goals conceded by the team
      */
     public void recordMatch(int scoredGoals, int concededGoals) {
+        if (scoredGoals < 0 || concededGoals < 0) {
+            System.out.println("Error: Goals cannot be negative.");
+            return;
+        }
         if (scoredGoals > concededGoals) {
             wins++;
             points += 3;
