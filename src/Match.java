@@ -2,12 +2,15 @@
  * This class was created to manage a match between two teams and to get the match details
  */
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Match {
 
     // Attributes
+    private List<GoalEvent> events; // Liste des événements de type GoalEvent
     /*
      * date and time of the match
      */
@@ -38,17 +41,18 @@ public class Match {
         this.awayScore = 0;
         this.playerGoals = new HashMap<>();
         this.playerAssists = new HashMap<>();
+        this.events = new ArrayList<>(); // Initialisation de la liste des événements
     }
     
-    public Match( LocalDateTime dateTime, Team homeTeam, Team awayTeam, int homeScore, int awayScore) {
-        this.matchDateTime = dateTime;
-        this.homeTeam = homeTeam;
-        this.awayTeam = awayTeam;
-        this.homeScore = homeScore;
-        this.awayScore = awayScore;
-        this.playerGoals = new HashMap<>();
-        this.playerAssists = new HashMap<>();
-    }
+//    public Match( LocalDateTime dateTime, Team homeTeam, Team awayTeam, int homeScore, int awayScore) {
+//        this.matchDateTime = dateTime;
+//        this.homeTeam = homeTeam;
+//        this.awayTeam = awayTeam;
+//        this.homeScore = homeScore;
+//        this.awayScore = awayScore;
+//        this.playerGoals = new HashMap<>();
+//        this.playerAssists = new HashMap<>();
+//    }
 
     // Getters and Setters
 
@@ -109,13 +113,13 @@ public class Match {
         return homeScore;
     }
 
-    /**
-     * Set the score of the home team
-     * @param homeScore the new score of the home team
-     */
-    public void setHomeScore(int homeScore) {
-        this.homeScore = homeScore;
-    }
+//    /**
+//     * Set the score of the home team
+//     * @param homeScore the new score of the home team
+//     */
+//    public void setHomeScore(int homeScore) {
+//        this.homeScore = homeScore;
+//    }
 
 /**
  * Get the current away team score.
@@ -126,12 +130,37 @@ public class Match {
         return awayScore;
     }
 
-    /**
-     * Set the score of the away team
-     * @param awayScore the new score of the away team
-     */
-    public void setAwayScore(int awayScore) {
-        this.awayScore = awayScore;
+//    /**
+//     * Set the score of the away team
+//     * @param awayScore the new score of the away team
+//     */
+//    public void setAwayScore(int awayScore) {
+//        this.awayScore = awayScore;
+//    }
+
+
+    public void addGoalEvent(Player scorer, Player assister, Team team, int minute) {
+        // Vérifier si le buteur appartient bien à l'équipe
+        if (!team.getPlayers().contains(scorer)) {
+            System.out.println("Error: Scorer " + scorer.getName() + " is not part of the team.");
+            return;
+        }
+
+        // Ajouter l'événement de but
+        GoalEvent goalEvent = new GoalEvent(scorer, assister, team, minute);
+        events.add(goalEvent);
+
+        // Mettre à jour les statistiques des joueurs
+        playerGoals.put(scorer, playerGoals.getOrDefault(scorer, 0) + 1);
+        scorer.addGoal();
+
+        if (assister != null) {
+            playerAssists.put(assister, playerAssists.getOrDefault(assister, 0) + 1);
+            assister.addAssist();
+        }
+
+        // Mettre à jour le score de l'équipe concernée
+        updateTeamScore();
     }
 
     /**
@@ -160,56 +189,7 @@ public class Match {
     }
 
 
-    /**
-     * Add a goal to the match for the given player.
-     * <p>
-     * If the player is not part of either team, an error message is printed and the goal is not counted.
-     * <p>
-     * The home team's score is incremented if the player is part of the home team, and the away team's score is incremented if the player is part of the away team.
-     * @param player the player who scored the goal
-     */
-
-    public void addGoal(Player player) {
-        if (!homeTeam.getPlayers().contains(player) && !awayTeam.getPlayers().contains(player)) {
-            System.out.println("Error: Player " + player.getName() + " is not part of either team.");
-            return;
-        }
-        // Ajouter un but au joueur
-        player.addGoal();
-        playerGoals.put(player, playerGoals.getOrDefault(player, 0) + 1);
-
-        // Mettre à jour le score de l'équipe
-        updateTeamScore();
-
-        System.out.println("Goal! " + player.getName() + " scored for the team.");
-    }
-
-
-    /**
-     * Add an assist to the match for the given player.
-     * <p>
-     * If the player is not part of either team, an error message is printed and the assist is not counted.
-     * <p>
-     * The number of assists of the player is incremented.
-     * @param player the player who assisted the goal
-     */
-    public void addAssist(Player player) {
-        if (!homeTeam.getPlayers().contains(player) && !awayTeam.getPlayers().contains(player)) {
-            System.out.println("Error: Player " + player.getName() + " is not part of either team.");
-            return;
-        }
-
-        playerAssists.put(player, playerAssists.getOrDefault(player, 0) + 1);
-        player.addAssist();
-    }
-
-//    // Finalize match and update team statistics
-//    public void finalizeMatch() {
-//        homeTeam.recordMatch(homeScore, awayScore);
-//        awayTeam.recordMatch(awayScore, homeScore);
-//    }
-
-
+    //maj direct du score (sans ajouter chaque buts )
     /**
      * Record the score of a match and update the team statistics.
      * @param homeScore the score of the home team
@@ -248,13 +228,10 @@ public class Match {
         System.out.println("Match Details:");
         System.out.println("Date & Time: " + matchDateTime);
         System.out.println(homeTeam.getName() + " (" + homeScore + ") vs " + awayTeam.getName() + " (" + awayScore + ")");
-        System.out.println("Goals:");
-        for (Map.Entry<Player, Integer> entry : playerGoals.entrySet()) {
-            System.out.println(" - " + entry.getKey().getName() + ": " + entry.getValue());
-        }
-        System.out.println("Assists:");
-        for (Map.Entry<Player, Integer> entry : playerAssists.entrySet()) {
-            System.out.println(" - " + entry.getKey().getName() + ": " + entry.getValue());
+        System.out.println("Events:");
+        for (GoalEvent event : events) {
+            System.out.println(" - " + event.getMinute() + "': " + event.getScorer().getName() +
+                    (event.getAssister() != null ? " (Assist: " + event.getAssister().getName() + ")" : ""));
         }
     }
 
