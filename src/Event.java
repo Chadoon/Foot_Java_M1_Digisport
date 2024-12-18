@@ -7,6 +7,9 @@ public abstract class Event {
     private ArrayList<Player> players;
 
     public Event(Type eventType, int minute, ArrayList<Player> players) {
+        if (minute < 0 || minute > 90) {
+            throw new IllegalArgumentException("Minute must be between 0 and 120");
+        }
         this.eventType = eventType;
         this.minute = minute;
         this.players = players;
@@ -40,5 +43,10 @@ public abstract class Event {
                 System.exit(-1);
         };
         return newEvent;
+    }
+
+    @Override
+    public String toString() {
+        return "Event: " + eventType + " at minute " + minute;
     }
 }

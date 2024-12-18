@@ -16,6 +16,15 @@ public class GoalEvent extends Event {
     //Type eventType, int minute, ArrayList<Player> players
     public GoalEvent(Player scorer, Player assister, Team team, int minute) {
         super(Type.GOAL, minute, new ArrayList<>()); // Appelle le constructeur d'Event
+        if (scorer == null || team == null) {
+            throw new IllegalArgumentException("Scorer and team cannot be null");
+        }
+        else if (!team.getPlayers().contains(scorer)) {
+            throw new IllegalArgumentException("Scorer must belong to the team");
+        }
+        else if (assister != null && !team.getPlayers().contains(assister)) {
+            throw new IllegalArgumentException("Assister must belong to the team");
+        }
         this.scorer = scorer;
         this.assister = assister;
         this.team = team;
@@ -58,13 +67,8 @@ public class GoalEvent extends Event {
      * @return A descriptive string for the goal event
      */
     @Override
-    public String getEvent() {
-        String baseEvent = super.getEvent(); // Récupère "But" depuis Event
-        if (assister != null) {
-            return baseEvent + " marqué par " + scorer.getName() + " (Assist: " + assister.getName() + ") à la " + getMinute() + "'.";
-        } else {
-            return baseEvent + " marqué par " + scorer.getName() + " à la " + getMinute() + "'.";
-        }
+    public String toString() {
+        return getEvent(); // Réutilise la méthode surchargée
     }
 }
 

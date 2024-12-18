@@ -7,16 +7,21 @@ public class Player extends Person {
      */
     private int goals;
     private int assists;
-    private Position position ;
+    private Position position;
+    private Team team;
 
     // Constructor
     public Player(String name, Position position) {
         super(name); // Appelle le constructeur de Person pour initialiser 'name'
         this.goals = 0;
         this.assists = 0;
-        this.position = position ;
+        this.position = position;
+        this.team = team;
     }
 
+    public Team getTeam() {
+        return team ;
+    }
     // Getters
     public Position getPosition() {
         return position;
@@ -26,17 +31,10 @@ public class Player extends Person {
         this.position = position;
     }
 
-    /**
-     * Getter of the player name
-     * @return player name
-     */
-    @Override
-    public String getName() {
-        return super.getName(); // Utilise le getter de la classe parente
-    }
 
     /**
      * Getter of the number of goals scored
+     *
      * @return number of goals scored by the player
      */
     public int getGoals() {
@@ -45,6 +43,7 @@ public class Player extends Person {
 
     /**
      * Getter of the number of assists
+     *
      * @return number of assists delivered by the player
      */
     public int getAssists() {
@@ -68,15 +67,18 @@ public class Player extends Person {
 
     /**
      * Display the stats of a player : their goals scored and assists
+     *
      * @return a display
      */
     public String getStats() {
-        return super.getName() + " - Goals: " + goals + ", Assists: " + assists ;
+        return super.getName() + " - Goals: " + goals + ", Assists: " + assists;
     }
 
+    public int compareTo(Player other) {
+        return Integer.compare(other.goals, this.goals); // Tri par nombre de buts (ordre décroissant)
+    }
     @Override
     public String toString() {
-        return super.getName(); // Utilise le getter de la classe parente
+        return super.getName() + " (" + position + ")";
     }
-
 }

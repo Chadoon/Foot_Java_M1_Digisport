@@ -1,7 +1,11 @@
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -109,71 +113,131 @@ public class Main {
 
         //test2
         // Step 1: Create a competition
-        Competition competition = new Competition("Champions League");
+//        Competition competition = new Competition("Champions League");
+//
+//        // Step 2: Create and add teams
+//        Team team1 = new Team("Real Madrid");
+//        Team team2 = new Team("Barcelona");
+//        Team team3 = new Team("Manchester United");
+//        Team team4 = new Team("Bayern Munich");
+//
+//        // Add players to each team
+//        addPlayersToTeam(team1);
+//        addPlayersToTeam(team2);
+//        addPlayersToTeam(team3);
+//        addPlayersToTeam(team4);
+//
+//        // Add teams to the competition
+//        competition.addTeam(team1);
+//        competition.addTeam(team2);
+//        competition.addTeam(team3);
+//        competition.addTeam(team4);
+//
+//        // Step 3: Generate all possible matches
+//        competition.generateMatches();
+//
+//        // Step 4: Display the generated matches
+//        System.out.println("\nGenerated Matches:");
+//        competition.displayMatches();
+//
+//        // Step 5: Simulate all matches
+//        System.out.println("\nSimulating Matches:");
+//        for (Match match : competition.getMatches()) {
+//            competition.simulateMatch(match);
+//        }
+//
+//        // Step 6: Display final standings
+//        System.out.println("\nFinal Standings:");
+//        competition.displayStandings();
+//
+//        // Step 7: Display match details
+//        System.out.println("\nMatch Details:");
+//        competition.displayMatches();
+//    }
 
-        // Step 2: Create and add teams
-        Team team1 = new Team("Real Madrid");
-        Team team2 = new Team("Barcelona");
-        Team team3 = new Team("Manchester United");
-        Team team4 = new Team("Bayern Munich");
 
-        // Add players to each team
-        addPlayersToTeam(team1);
-        addPlayersToTeam(team2);
-        addPlayersToTeam(team3);
-        addPlayersToTeam(team4);
+//    /**
+//     * Utility method to add players to a team with the required formation.
+//     * @param team the team to which players will be added
+//     */
+//    private static void addPlayersToTeam(Team team) {
+//        // Adding 1 Goalkeeper
+//        team.addPlayer(new Player("GK " + team.getName(), Position.GK));
+//
+//        // Adding 4 Defenders
+//        for (int i = 1; i <= 4; i++) {
+//            team.addPlayer(new Player("Joueur " + " " + i + team.getName() , Position.DEF));
+//        }
+//
+//        // Adding 4 Midfielders
+//        for (int i = 1; i <= 4; i++) {
+//            team.addPlayer(new Player("Joueur " + " " + i + team.getName(), Position.MID));
+//        }
+//
+//        // Adding 2 Forwards
+//        for (int i = 1; i <= 2; i++) {
+//            team.addPlayer(new Player("Joueur " + " " + i + team.getName(), Position.FWD));
+//        }
 
-        // Add teams to the competition
-        competition.addTeam(team1);
-        competition.addTeam(team2);
-        competition.addTeam(team3);
-        competition.addTeam(team4);
 
-        // Step 3: Generate all possible matches
-        competition.generateMatches();
 
-        // Step 4: Display the generated matches
-        System.out.println("\nGenerated Matches:");
-        competition.displayMatches();
+                // Étape 1 : Lire les joueurs depuis un fichier CSV
+                List<Player> allPlayers = readPlayersFromCSV("players.csv");
 
-        // Step 5: Simulate all matches
-        System.out.println("\nSimulating Matches:");
-        for (Match match : competition.getMatches()) {
-            competition.simulateMatch(match);
+                // Étape 2 : Créer les équipes
+                Map<String, Team> teams = new HashMap<>();
+                for (Player player : allPlayers) {
+                    teams.computeIfAbsent(player.getTeamName(), Team::new).addPlayer(player);
+                }
+
+                // Étape 3 : Créer une compétition et ajouter les équipes
+                Competition competition = new Competition("Champions League");
+                for (Team team : teams.values()) {
+                    competition.addTeam(team);
+                }
+
+                // Étape 4 : Générer les matchs
+                competition.generateMatches();
+
+                // Étape 5 : Simuler chaque match
+                for (Match match : competition.getMatches()) {
+                    competition.simulateMatch(match);
+                }
+
+                // Étape 6 : Afficher les détails des matchs et les classements
+                competition.displayMatches();
+                competition.displayStandings();
+            }
+
+            /**
+             * Lit les joueurs depuis un fichier CSV et retourne une liste de joueurs.
+             * @param fileName le chemin du fichier CSV
+             * @return la liste des joueurs
+             */
+            public static List<Player> readPlayersFromCSV(String fileName) {
+                List<Player> players = new ArrayList<>();
+                try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+                    String line = br.readLine(); // Lire l'en-tête
+                    while ((line = br.readLine()) != null) {
+                        String[] fields = line.split(",");
+                        if (fields.length == 3) {
+                            String name = fields[0].trim();
+                            String position = fields[1].trim();
+                            String teamName = fields[2].trim();
+                            Position pos = Position.valueOf(position.toUpperCase());
+                            players.add(new Player(name, pos, teamName));
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Error reading CSV file: " + e.getMessage());
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid position in CSV file: " + e.getMessage());
+                }
+                return players;
+            }
         }
 
-        // Step 6: Display final standings
-        System.out.println("\nFinal Standings:");
-        competition.displayStandings();
-
-        // Step 7: Display match details
-        System.out.println("\nMatch Details:");
-        competition.displayMatches();
     }
 
-
-    /**
-     * Utility method to add players to a team with the required formation.
-     * @param team the team to which players will be added
-     */
-    private static void addPlayersToTeam(Team team) {
-        // Adding 1 Goalkeeper
-        team.addPlayer(new Player("GK " + team.getName(), Position.GK));
-
-        // Adding 4 Defenders
-        for (int i = 1; i <= 4; i++) {
-            team.addPlayer(new Player("Joueur " + " " + i + team.getName() , Position.DEF));
-        }
-
-        // Adding 4 Midfielders
-        for (int i = 1; i <= 4; i++) {
-            team.addPlayer(new Player("Joueur " + " " + i + team.getName(), Position.MID));
-        }
-
-        // Adding 2 Forwards
-        for (int i = 1; i <= 2; i++) {
-            team.addPlayer(new Player("Joueur " + " " + i + team.getName(), Position.FWD));
-        }
-    }
 
 }

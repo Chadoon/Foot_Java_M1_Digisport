@@ -198,10 +198,9 @@ public class Competition {
 
     // Simuler un but pour une team
     private void simulateGoal(Team team, Match match, int minute, Random random) {
-        // Récupérer les players de la team
         List<Player> players = new ArrayList<>(team.getPlayers());
 
-        // Classer les joueurs par poste
+        // Catégorisation des joueurs par poste
         List<Player> forwards = new ArrayList<>();
         List<Player> midfielders = new ArrayList<>();
         List<Player> defenders = new ArrayList<>();
@@ -218,36 +217,38 @@ public class Competition {
 
         Player scorer = null;
         Player assister = null;
-        double roll = random.nextDouble();
 
-        // Choisir un buteur en fonction des probabilités
-        if (roll < 0.50 && !forwards.isEmpty()) {  // 50% chance pour attaquants
+        // Probabilités pour choisir le buteur
+        double roll = random.nextDouble();
+        if (roll < 0.50 && !forwards.isEmpty()) { // 50 % attaquants
             scorer = forwards.get(random.nextInt(forwards.size()));
-        } else if (roll < 0.80 && !midfielders.isEmpty()) {  // 30% chance pour milieux
+        } else if (roll < 0.80 && !midfielders.isEmpty()) { // 30 % milieux
             scorer = midfielders.get(random.nextInt(midfielders.size()));
-        } else if (roll < 0.95 && !defenders.isEmpty()) {  // 15% chance pour défenseurs
+        } else if (roll < 0.95 && !defenders.isEmpty()) { // 15 % défenseurs
             scorer = defenders.get(random.nextInt(defenders.size()));
-        } else if (!goalkeepers.isEmpty()) {  // 5% chance pour gardiens
+        } else if (!goalkeepers.isEmpty()) { // 5 % gardiens
             scorer = goalkeepers.get(random.nextInt(goalkeepers.size()));
         }
 
-        // Assister aléatoire (20% de probabilité d'avoir un assist)
+        // Probabilité pour l'assistant (20 %)
         if (random.nextDouble() < 0.2) {
             assister = players.get(random.nextInt(players.size()));
         }
 
-        // Si un buteur a été sélectionné
+        // Si un buteur a été trouvé
         if (scorer != null) {
             scorer.addGoal();
             if (assister != null) {
                 assister.addAssist();
             }
-
             match.addGoalEvent(scorer, assister, team, minute);
 
-            System.out.println("Minute " + minute + ": Goal for " + team.getName() + " by " + scorer.getName() + (assister != null ? " (Assist: " + assister.getName() + ")" : ""));
+            // Affichage du but simulé
+            System.out.println("Minute " + minute + ": Goal for " + team.getName() + " by " + scorer.getName() +
+                    (assister != null ? " (Assist: " + assister.getName() + ")" : ""));
         }
     }
+
 
 
     @Override
