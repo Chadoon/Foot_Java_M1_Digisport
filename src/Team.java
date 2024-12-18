@@ -1,10 +1,11 @@
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * This class represents a football team with players, stats, and utilities.
  */
-public class Team {
+public class Team implements Serializable{
     private String name;
     private Set<Player> players;
     private int wins, losses, draws, points, goals, goalsAgainst;

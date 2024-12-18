@@ -1,10 +1,13 @@
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.io.Serializable;
 
-public class Competition {
+public class Competition implements Serializable {
+
 
     // Attributes
     /**
@@ -47,6 +50,24 @@ public class Competition {
      */
     public void addMatch(Match match) {
         matches.add(match);
+    }
+
+    public void saveCompetitionToFile( String filePath) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(this.name);
+            System.out.println("Competition saved to file: " + filePath);
+        } catch (IOException e) {
+            System.out.println("Error saving competition: " + e.getMessage());
+        }
+    }
+
+    public Competition loadCompetitionFromFile(String filePath) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            return (Competition) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error loading competition: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -107,6 +128,15 @@ public class Competition {
             System.out.println("Error: One or both teams are not part of the competition.");
             return;
         }
+        //verifie que 2 equipes jouent pas au mm moment
+        for (Match m : matches) {
+            if ((m.getHomeTeam().equals(teamA) && m.getAwayTeam().equals(teamB) ||
+                    m.getHomeTeam().equals(teamB) && m.getAwayTeam().equals(teamA)) &&
+                    m.getDateTime().equals(matchDateTime)) {
+                System.out.println("Error: A match between these teams is already scheduled at this time.");
+                return;
+            }
+        }
 
         Match match = new Match(matchDateTime, teamA, teamB);
         matches.add(match);
@@ -123,29 +153,8 @@ public class Competition {
         }
     }
 
-    /**
-     * Display the standings for the competition, with teams sorted by points descending.
-     * if 2 teams have similar points then we compare with the goals difference
-     */
-    public void displayStandings() {
-        System.out.println("Standings for competition " + name + ":");
-        teams.sort((t1, t2) -> {
-            int pointComparison = Integer.compare(t2.getPoints(), t1.getPoints());
-            if (pointComparison == 0) {
-                return Integer.compare((t2.getGoals() - t2.getGoalsAgainst()), (t1.getGoals() - t1.getGoalsAgainst()));
-            }
-            return pointComparison;
-        });
 
-        // Affichage des dÃ©tails de chaque Ã©quipe aprÃ¨s le tri
-        for (Team team : teams) {
-            System.out.println(team.getName() + " - Points: " + team.getPoints() +
-                    ", Goals: " + team.getGoals() + ", Goals Against: " + team.getGoalsAgainst() +
-                    ", Goal Difference: " + (team.getGoals() - team.getGoalsAgainst()));
-        }
-    }
-
-    public void generateMatches() {
+    public void generateMatchesRoundRobin() {
         if (teams.size() < 2) {
             System.out.println("Error: At least two teams are required to schedule matches.");
             return;
@@ -154,25 +163,20 @@ public class Competition {
         Random random = new Random();
         LocalDateTime startDate = LocalDateTime.now().plusDays(1);
 
-        // Clear existing matches
         matches.clear();
 
-        // Generate all possible matches
         for (int i = 0; i < teams.size(); i++) {
             for (int j = i + 1; j < teams.size(); j++) {
                 Team teamA = teams.get(i);
                 Team teamB = teams.get(j);
 
-                // Generate a random date for the match
-                LocalDateTime matchDate = startDate.plusDays(random.nextInt(30)); // Random within 30 days
-
-                // Schedule the match
-                Match match = new Match(matchDate, teamA, teamB);
-                matches.add(match);
+                LocalDateTime matchDate = startDate.plusDays(random.nextInt(30));
+                matches.add(new Match(matchDate, teamA, teamB)); // Match aller
+                matches.add(new Match(matchDate.plusDays(7), teamB, teamA)); // Match retour
             }
         }
 
-        System.out.println("All matches generated successfully. Total matches: " + matches.size());
+        System.out.println("Round-robin matches generated successfully.");
     }
 
     // Simuler un match avec des scores aléatoires
@@ -249,6 +253,45 @@ public class Competition {
         }
     }
 
+    /**
+     * Display the standings for the competition, with teams sorted by points descending.
+     * if 2 teams have similar points then we compare with the goals difference
+     */
+    public void displayStandings() {
+        System.out.println("Standings for competition " + name + ":");
+        teams.sort((t1, t2) -> {
+            int pointComparison = Integer.compare(t2.getPoints(), t1.getPoints());
+            if (pointComparison == 0) {
+                int goalDiffComparison = Integer.compare((t2.getGoals() - t2.getGoalsAgainst()), (t1.getGoals() - t1.getGoalsAgainst()));
+                if (goalDiffComparison == 0) {
+                    return Integer.compare(t2.getGoals(), t1.getGoals());
+                }
+                return goalDiffComparison;
+            }
+            return pointComparison;
+        });
+
+        // Affichage des dÃ©tails de chaque Ã©quipe aprÃ¨s le tri
+        for (Team team : teams) {
+            System.out.println(team.getName() + " - Points: " + team.getPoints() +
+                    ", Goals: " + team.getGoals() + ", Goals Against: " + team.getGoalsAgainst() +
+                    ", Goal Difference: " + (team.getGoals() - team.getGoalsAgainst()));
+        }
+    }
+
+//    public void exportStandingsToCSV(String filePath) throws IOException {
+//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+//            writer.write("Team,Points,Goals,Goals Against,Goal Difference\n");
+//            for (Team team : teams) {
+//                writer.write(team.getName() + "," + team.getPoints() + "," +
+//                        team.getGoals() + "," + team.getGoalsAgainst() + "," +
+//                        (team.getGoals() - team.getGoalsAgainst()) + "\n");
+//            }
+//            System.out.println("Standings exported to " + filePath);
+//        } catch (IOException e) {
+//            System.out.println("Error exporting standings: " + e.getMessage());
+//        }
+//    }
 
 
     @Override
@@ -259,4 +302,8 @@ public class Competition {
         }
         return sb.toString();
     }
+
+
+
+
 }

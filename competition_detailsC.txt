@@ -1,0 +1,7 @@
+Competition: Championship
+Match{matchDateTime=2024-12-28T14:17:17.499923, homeTeam=Team@bebdb06, awayTeam=Team@7a4f0f29, homeScore=0, awayScore=0, playerGoals={}, playerAssists={}}
+Match{matchDateTime=2025-01-04T14:17:17.499923, homeTeam=Team@7a4f0f29, awayTeam=Team@bebdb06, homeScore=0, awayScore=0, playerGoals={}, playerAssists={}}
+Match{matchDateTime=2024-12-22T14:17:17.499923, homeTeam=Team@bebdb06, awayTeam=Team@1cf4f579, homeScore=0, awayScore=0, playerGoals={}, playerAssists={}}
+Match{matchDateTime=2024-12-29T14:17:17.499923, homeTeam=Team@1cf4f579, awayTeam=Team@bebdb06, homeScore=0, awayScore=0, playerGoals={}, playerAssists={}}
+Match{matchDateTime=2024-12-28T14:17:17.499923, homeTeam=Team@7a4f0f29, awayTeam=Team@1cf4f579, homeScore=0, awayScore=0, playerGoals={}, playerAssists={}}
+Match{matchDateTime=2025-01-04T14:17:17.499923, homeTeam=Team@1cf4f579, awayTeam=Team@7a4f0f29, homeScore=0, awayScore=0, playerGoals={}, playerAssists={}}

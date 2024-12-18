@@ -1,4 +1,6 @@
-public class Player extends Person {
+import java.io.Serializable;
+
+public class Player extends Person implements Serializable {
 
     // Attributes
 
@@ -12,7 +14,7 @@ public class Player extends Person {
     private int minutesPlayed;
 
     // Constructor
-    public Player(String name, Position position) {
+    public Player(String name, Position position)  {
         super(name); // Appelle le constructeur de Person pour initialiser 'name'
         this.goals = 0;
         this.assists = 0;

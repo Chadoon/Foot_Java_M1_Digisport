@@ -1,13 +1,14 @@
 /**
  * This class was created to manage a match between two teams and to get the match details
  */
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Match {
+public class Match implements Serializable {
 
     // Attributes
     private List<GoalEvent> events; // Liste des événements de type GoalEvent
