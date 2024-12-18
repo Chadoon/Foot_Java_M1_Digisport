@@ -273,27 +273,13 @@ public class Competition implements Serializable {
             return pointComparison;
         });
 
-        // Affichage des dÃ©tails de chaque Ã©quipe aprÃ¨s le tri
+        // Affichage des details de chaque equipe apres le tri
         for (Team team : teams) {
             System.out.println(team.getName() + " - Points: " + team.getPoints() +
                     ", Goals: " + team.getGoals() + ", Goals Against: " + team.getGoalsAgainst() +
                     ", Goal Difference: " + (team.getGoals() - team.getGoalsAgainst()));
         }
     }
-
-//    public void exportStandingsToCSV(String filePath) throws IOException {
-//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-//            writer.write("Team,Points,Goals,Goals Against,Goal Difference\n");
-//            for (Team team : teams) {
-//                writer.write(team.getName() + "," + team.getPoints() + "," +
-//                        team.getGoals() + "," + team.getGoalsAgainst() + "," +
-//                        (team.getGoals() - team.getGoalsAgainst()) + "\n");
-//            }
-//            System.out.println("Standings exported to " + filePath);
-//        } catch (IOException e) {
-//            System.out.println("Error exporting standings: " + e.getMessage());
-//        }
-//    }
 
 
     @Override
