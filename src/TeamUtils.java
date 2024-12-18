@@ -2,7 +2,7 @@ import java.util.*;
 
 public class TeamUtils {
 
-    // Listes globales de joueurs disponibles par position (Premier League 2023-2024)
+
     private static final List<String> goalkeepers = new ArrayList<>(Arrays.asList(
             "Aaron Ramsdale", "David Raya", "Alisson Becker", "Ederson",
             "Nick Pope", "Andre Onana", "Emiliano Martinez", "Robert Sanchez",

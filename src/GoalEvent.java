@@ -1,10 +1,13 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GoalEvent extends Event {
+public class GoalEvent extends Event implements Serializable {
     private final Player scorer;
     private final Player assister;
     private Team team;
+    private static final long serialVersionUID = 1L;
+
 
     /**
      * Constructor for GoalEvent.
@@ -19,12 +22,13 @@ public class GoalEvent extends Event {
         if (scorer == null || team == null) {
             throw new IllegalArgumentException("Scorer and team cannot be null");
         }
-        else if (!team.getPlayers().contains(scorer)) {
+        if (!team.getPlayers().contains(scorer)) {
             throw new IllegalArgumentException("Scorer must belong to the team");
         }
-        else if (assister != null && !team.getPlayers().contains(assister)) {
+        if (assister != null && !team.getPlayers().contains(assister)) {
             throw new IllegalArgumentException("Assister must belong to the team");
         }
+
         this.scorer = scorer;
         this.assister = assister;
         this.team = team;

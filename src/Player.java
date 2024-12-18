@@ -32,6 +32,11 @@ public class Player extends Person implements Serializable {
         this.team = team;
     }
 
+    /**
+     * Gets the team of this player.
+     *
+     * @return the team of this player
+     */
     public Team getTeam() {
         return team ;
     }
@@ -40,9 +45,21 @@ public class Player extends Person implements Serializable {
         return position;
     }
 
+    /**
+     * Sets the position of the player.
+     *
+     * @param position the position to be assigned to the player
+     */
+
     public void setPosition(Position position) {
         this.position = position;
     }
+
+    /**
+     * Adds the specified number of minutes to the player's total minutes played.
+     *
+     * @param minutes the number of minutes to add
+     */
 
     public void addMinutesPlayed(int minutes) {
         this.minutesPlayed += minutes;
@@ -95,9 +112,21 @@ public class Player extends Person implements Serializable {
         }
     }
 
+    /**
+     * Compare two players based on their goals scored. The player with the most goals comes first.
+     *
+     * @param other the other player to compare with
+     * @return a negative integer, zero, or a positive integer as this player has fewer goals than,
+     *         the same number of goals as, or more goals than the other player
+     */
     public int compareTo(Player other) {
         return Integer.compare(other.goals, this.goals); // Tri par nombre de buts (ordre décroissant)
     }
+    /**
+     * Get a string representation of the player, including their name and position.
+     *
+     * @return a string of the form "Name (Position)"
+     */
     @Override
     public String toString() {
         return super.getName() + " (" + position + ")";

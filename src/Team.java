@@ -54,7 +54,14 @@ public class Team implements Serializable{
         return goals - goalsAgainst;
     }
 
-    // --- Validation Methods ---
+
+    // Méthodes pour mettre à jour les statistiques
+    public void addPoints(int points) { this.points += points; }
+    public void addGoals(int goals) { this.goals += goals; }
+    public void addGoalsAgainst(int goalsAgainst) { this.goalsAgainst += goalsAgainst; }
+
+
+// --- Validation Methods ---
     public boolean isValidFormation() {
         Map<Position, Integer> positionCounts = new HashMap<>();
         for (Position pos : Position.values()) {
@@ -65,6 +72,14 @@ public class Team implements Serializable{
         return FORMATION.entrySet().stream()
                 .allMatch(entry -> positionCounts.getOrDefault(entry.getKey(), 0).equals(entry.getValue()));
     }
+
+/**
+ * Validates if the team is eligible for a match.
+ *
+ * @return true if the team has the required number of players and a valid formation.
+ * @throws IllegalStateException if the team does not have exactly the required number
+ *                               of players or if the team's formation is invalid.
+ */
 
     public boolean isValidForMatch() {
         if (players.size() != REQUIRED_PLAYERS_FOR_MATCH) {
@@ -77,6 +92,18 @@ public class Team implements Serializable{
     }
 
     // --- Player Management ---
+
+    
+/**
+ * Adds a player to the team if possible.
+ * 
+ * @param player the player to be added
+ * @return true if the player was successfully added
+ * @throws IllegalArgumentException if the player is null
+ * @throws IllegalStateException if the team already has the maximum number of players or 
+ *                               if the player is already in the team
+ */
+
     public boolean addPlayer(Player player) {
         if (player == null) {
             throw new IllegalArgumentException("Cannot add a null player.");
@@ -90,6 +117,11 @@ public class Team implements Serializable{
         return true;
     }
 
+    /**
+     * Finds a player in the team by name, ignoring case.
+     * @param playerName the name of the player to find
+     * @return the player with the given name, or null if not found
+     */
     public Player findPlayerByName(String playerName) {
         return players.stream()
                 .filter(player -> player.getName().equalsIgnoreCase(playerName))
@@ -97,6 +129,13 @@ public class Team implements Serializable{
                 .orElse(null);
     }
 
+    /**
+     * Removes a player from the team by name, ignoring case.
+     * 
+     * @param playerName the name of the player to remove
+     * @return true if the player was found and removed
+     * @throws IllegalStateException if the player is not found in the team
+     */
     public boolean removePlayer(String playerName) {
         Player playerToRemove = findPlayerByName(playerName);
         if (playerToRemove == null) {
@@ -106,41 +145,11 @@ public class Team implements Serializable{
         return true;
     }
 
-    // --- Match Management ---
-    public void recordMatch(int scoredGoals, int concededGoals) {
-        if (scoredGoals < 0 || concededGoals < 0) {
-            throw new IllegalArgumentException("Goals cannot be negative.");
-        }
-        if (scoredGoals > concededGoals) {
-            wins++;
-            points += 3;
-        } else if (scoredGoals < concededGoals) {
-            losses++;
-        } else {
-            draws++;
-            points++;
-        }
-        goals += scoredGoals;
-        goalsAgainst += concededGoals;
-    }
 
-    // --- Export and Display ---
-    public String toJson() {
-        return "{\n" +
-                "  \"name\": \"" + name + "\",\n" +
-                "  \"wins\": " + wins + ",\n" +
-                "  \"losses\": " + losses + ",\n" +
-                "  \"draws\": " + draws + ",\n" +
-                "  \"points\": " + points + ",\n" +
-                "  \"goals\": " + goals + ",\n" +
-                "  \"goalsAgainst\": " + goalsAgainst + ",\n" +
-                "  \"goalDifference\": " + getGoalDifference() + ",\n" +
-                "  \"players\": " + players.stream()
-                .map(Player::toString)
-                .collect(Collectors.toList()) + "\n" +
-                "}";
-    }
 
+    /**
+     * Display team information to the console, including the team name, wins, losses, draws, points, goals, goals against, goal difference, and the players in the team.
+     */
     public void displayTeamInfo() {
         System.out.println("Team: " + name);
         System.out.println("Wins: " + wins + ", Losses: " + losses + ", Draws: " + draws + ", Points: " + points);

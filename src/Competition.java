@@ -53,6 +53,11 @@ public class Competition implements Serializable {
         matches.add(match);
     }
 
+    /**
+     * Save a competition to a file.
+     * @param filePath the path to the file to which to save the competition
+     * @param compet the competition to save
+     */
     public static void saveCompetitionToFile( String filePath, Competition compet) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
             oos.writeObject(compet);
@@ -62,6 +67,13 @@ public class Competition implements Serializable {
         }
     }
 
+    /**
+     * Load a competition from a file.
+     * @param filePath the path to the file
+     * @return the loaded competition, or null if an error occurs
+     * @throws IOException if the file does not exist or cannot be read
+     * @throws ClassNotFoundException if the file does not contain a Competition object
+     */
     public static Competition loadCompetitionFromFile(String filePath) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
             Object obj = ois.readObject();
@@ -156,6 +168,13 @@ public class Competition implements Serializable {
     }
 
 
+/**
+ * Generates a round-robin schedule of matches for all teams in the competition.
+ * Each team plays every other team twice, once at home and once away, with random match dates.
+ * If there are fewer than two teams, matches are not generated.
+ * Clears any existing matches before generating new ones.
+ */
+
     public void generateMatchesRoundRobin() {
         if (teams.size() < 2) {
             System.out.println("Error: At least two teams are required to schedule matches.");
@@ -181,28 +200,93 @@ public class Competition implements Serializable {
         System.out.println("Round-robin matches generated successfully.");
     }
 
-    // Simuler un match avec des scores aléatoires
+
+
+
+/**
+ * Simulates a football match between two teams, generating random goals
+ * and updating the match's score and team statistics.
+ *
+ * The match is simulated minute by minute with a 10% chance of a goal being
+ * scored each minute. Goals are randomly assigned to either the home or away
+ * team, and the match's score is recorded accordingly.
+ *
+ * Updates the goals scored and goals against for both teams and awards points
+ * based on the match result: 3 points for a win, 1 point for a draw.
+ *
+ * Displays the final result of the match.
+ *
+ * @param match The Match object representing the game to be simulated.
+ */
+
     public void simulateMatch(Match match) {
         Random random = new Random();
-        int homeGoals = random.nextInt(5);
-        int awayGoals = random.nextInt(5);
 
-        // Simulation de chaque but (en utilisant simulateGoal)
+        int homeGoals = 0;
+        int awayGoals = 0;
+
+        // Simulation de chaque minute du match
         for (int minute = 1; minute <= 90; minute += random.nextInt(10) + 1) {
             if (random.nextDouble() < 0.1) { // 10% de chance qu'un but soit marqué à chaque minute
                 if (random.nextBoolean()) {
+                   // But de l'équipe à domicile
+
                     simulateGoal(match.getHomeTeam(), match, minute, random);
+                    homeGoals++;
                 } else {
+                    // But de l'équipe à l'extérieur
                     simulateGoal(match.getAwayTeam(), match, minute, random);
+                    awayGoals++;
                 }
             }
         }
 
-        // Mettre à jour le score final
+        // Mettre à jour le score final dans le match
         match.recordScore(homeGoals, awayGoals);
+
+        // **Mise à jour des équipes après le match**
+        Team homeTeam = match.getHomeTeam();
+        Team awayTeam = match.getAwayTeam();
+
+        // Mise à jour des buts marqués et encaissés
+        homeTeam.addGoals(homeGoals);
+        homeTeam.addGoalsAgainst(awayGoals);
+        awayTeam.addGoals(awayGoals);
+        awayTeam.addGoalsAgainst(homeGoals);
+
+        // Mise à jour des points
+        if (homeGoals > awayGoals) { // Victoire équipe domicile
+            homeTeam.addPoints(3);
+        } else if (homeGoals < awayGoals) { // Victoire équipe extérieure
+            awayTeam.addPoints(3);
+        } else { // Match nul
+            homeTeam.addPoints(1);
+            awayTeam.addPoints(1);
+        }
+
+
+        // Afficher le résultat du match
+        System.out.println("Match simulated: " + match.getHomeTeam().getName() + " " +
+                homeGoals + " - " + awayGoals + " " + match.getAwayTeam().getName());
     }
 
-    // Simuler un but pour une team
+/**
+ * Simulates a goal event in a match by randomly selecting a player from the team
+ * to score and optionally selecting an assisting player.
+ *
+ * The function categorizes players into forwards, midfielders, defenders, and goalkeepers
+ * and assigns probabilities for each category to score. It then randomly determines a scorer
+ * based on these probabilities and, with a 20% chance, selects an assister from the team.
+ *
+ * If a goal is scored, the scorer's goal count and the assister's assist count are updated,
+ * and a new GoalEvent is added to the match. The goal event is printed to the console.
+ *
+ * @param team the team for which the goal is being simulated
+ * @param match the match in which the goal event occurs
+ * @param minute the minute in the match when the goal is scored
+ * @param random the Random object used for random number generation
+ */
+
     private void simulateGoal(Team team, Match match, int minute, Random random) {
         List<Player> players = new ArrayList<>(team.getPlayers());
 
@@ -255,12 +339,17 @@ public class Competition implements Serializable {
         }
     }
 
-    /**
-     * Display the standings for the competition, with teams sorted by points descending.
-     * if 2 teams have similar points then we compare with the goals difference
-     */
+
+/**
+ * Displays the standings of all teams in the competition, sorted by points,
+ * goal difference, and goals scored. Teams are first compared based on their
+ * points, followed by goal difference if points are equal, and finally goals
+ * scored if both points and goal difference are equal. The details of each
+ * team, including name, points, goals scored, goals against, and goal
+ * difference, are printed to the console.
+ */
+
     public void displayStandings() {
-        System.out.println("Standings for competition " + name + ":");
         teams.sort((t1, t2) -> {
             int pointComparison = Integer.compare(t2.getPoints(), t1.getPoints());
             if (pointComparison == 0) {
