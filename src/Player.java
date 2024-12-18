@@ -9,6 +9,7 @@ public class Player extends Person {
     private int assists;
     private Position position;
     private Team team;
+    private int minutesPlayed;
 
     // Constructor
     public Player(String name, Position position) {
@@ -29,6 +30,10 @@ public class Player extends Person {
 
     public void setPosition(Position position) {
         this.position = position;
+    }
+
+    public void addMinutesPlayed(int minutes) {
+        this.minutesPlayed += minutes;
     }
 
 
@@ -71,7 +76,11 @@ public class Player extends Person {
      * @return a display
      */
     public String getStats() {
-        return super.getName() + " - Goals: " + goals + ", Assists: " + assists;
+        if (minutesPlayed != 0) {
+            return super.getName() + " - Goals: " + goals + ", Assists: " + assists + ", Minutes Played : " + minutesPlayed;
+        } else {
+            return super.getName() + " - Goals: " + goals + ", Assists: " + assists;
+        }
     }
 
     public int compareTo(Player other) {

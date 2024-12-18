@@ -145,4 +145,10 @@ public class Team {
         System.out.println("Players (" + players.size() + "):");
         players.forEach(player -> System.out.println(" - " + player));
     }
+
+    //classement joueurs
+    public static List<Player> sortPlayersByGoals(List<Player> players) {
+        players.sort((p1, p2) -> Integer.compare(p2.getGoals(), p1.getGoals())); // Tri décroissant par nombre de buts
+        return players;
+    }
 }
