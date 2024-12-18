@@ -26,6 +26,7 @@ public class Competition implements Serializable {
         this.matches = new ArrayList<>();
         this.teams = new ArrayList<>();
     }
+    private static final long serialVersionUID = 1L;
 
     // Getters
     /**
@@ -52,18 +53,19 @@ public class Competition implements Serializable {
         matches.add(match);
     }
 
-    public void saveCompetitionToFile( String filePath) {
+    public static void saveCompetitionToFile( String filePath, Competition compet) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(this.name);
+            oos.writeObject(compet);
             System.out.println("Competition saved to file: " + filePath);
         } catch (IOException e) {
             System.out.println("Error saving competition: " + e.getMessage());
         }
     }
 
-    public Competition loadCompetitionFromFile(String filePath) {
+    public static Competition loadCompetitionFromFile(String filePath) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
-            return (Competition) ois.readObject();
+            Object obj = ois.readObject();
+            return (Competition)obj ;
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Error loading competition: " + e.getMessage());
             return null;

@@ -147,11 +147,12 @@ public class Main {
 
         System.out.println("\n=== Save a competition (dans un binary file )");
         System.out.println("\n=== Exporting Competition Details ===");
-        competition.saveCompetitionToFile( "compet1") ;
-        
+        Competition.saveCompetitionToFile( "compet2", competition) ;
 
 
-
+        System.out.println("\n=== Load competition ");
+        Competition loadedCompetition = Competition.loadCompetitionFromFile("compet2");
+        System.out.println(loadedCompetition);
 
 
     }

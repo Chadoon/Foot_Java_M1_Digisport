@@ -13,6 +13,16 @@ public class Player extends Person implements Serializable {
     private Team team;
     private int minutesPlayed;
 
+    private static final long serialVersionUID = 1L;
+
+    public Player() {
+        super(""); // Appelle un constructeur par défaut de la classe Person (assurez-vous qu'il existe)
+        this.goals = 0;
+        this.assists = 0;
+        this.position = null; // Vous pouvez définir une position par défaut si nécessaire
+        this.team = null;
+        this.minutesPlayed = 0;
+    }
     // Constructor
     public Player(String name, Position position)  {
         super(name); // Appelle le constructeur de Person pour initialiser 'name'

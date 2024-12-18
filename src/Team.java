@@ -13,6 +13,8 @@ public class Team implements Serializable{
     private static final int MAX_PLAYERS = 23; // Maximum allowed players in the team
     private static final int REQUIRED_PLAYERS_FOR_MATCH = 11;
 
+    private static final long serialVersionUID = 1L;
+
     private static final Map<Position, Integer> FORMATION = Map.of(
             Position.GK, 1,
             Position.DEF, 4,
@@ -151,5 +153,19 @@ public class Team implements Serializable{
     public static List<Player> sortPlayersByGoals(List<Player> players) {
         players.sort((p1, p2) -> Integer.compare(p2.getGoals(), p1.getGoals())); // Tri décroissant par nombre de buts
         return players;
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "name='" + name + '\'' +
+                ", players=" + players +
+                ", wins=" + wins +
+                ", losses=" + losses +
+                ", draws=" + draws +
+                ", points=" + points +
+                ", goals=" + goals +
+                ", goalsAgainst=" + goalsAgainst +
+                '}';
     }
 }

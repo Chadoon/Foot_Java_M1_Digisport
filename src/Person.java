@@ -9,6 +9,10 @@ public abstract class Person {
     private String name;
     //Age
 
+    public Person() {
+        this.name = "";
+    }
+
     // Constructor
     public Person(String name) {
         this.name = name;

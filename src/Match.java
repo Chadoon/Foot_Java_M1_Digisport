@@ -32,6 +32,8 @@ public class Match implements Serializable {
     private Map<Player, Integer> playerGoals;
     private Map<Player, Integer> playerAssists;
 
+    private static final long serialVersionUID = 1L;
+
     // Constructor
     public Match(LocalDateTime dateTime, Team homeTeam, Team awayTeam) {
         if (!homeTeam.isValidForMatch() || !awayTeam.isValidForMatch()) {
